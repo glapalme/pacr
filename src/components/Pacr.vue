@@ -9,71 +9,100 @@
           </v-card-title>
           <v-card-text>
             <v-form>
-              <v-text-field
-                type="text"
-                label="Time"
-                v-model="time.input"
-                autocomplete="off"
-                prepend-icon="mdi-calculator"
-                :append-outer-icon="timeOuterIcon"
-                :error-messages="time.errMessage"
-                @change="eventTimeChanged"
-                @click:prepend="calculateTime"
-                @input="eventTimeInput"
-                placeholder="00:00:00"
-              />
-              <v-menu offset-x>
-                <template v-slot:activator="{ on }">
+              <v-row align="center" class="pa-0">
+                <v-col cols="2">
+                  <v-btn rounded fab x-small elevation="1" color="primary" @click="calculateTime">
+                    <v-icon>mdi-equal</v-icon>
+                  </v-btn>
+                </v-col>
+                <v-col cols="10">
                   <v-text-field
                     type="text"
-                    label="Distance"
-                    v-model="dist.input"
+                    label="Time"
+                    v-model="time.input"
                     autocomplete="off"
-                    prepend-icon="mdi-calculator"
-                    :suffix="distanceUnit"
-                    :error-messages="dist.errMessage"
-                    append-icon="mdi-unfold-more-horizontal"
-                    :append-outer-icon="distanceOuterIcon"
-                    @change="eventDistanceChanged"
-                    @click:prepend="calculateDistance"
-                    @click:append="toggleDistanceUnits"
-                    @click:append-outer="on.click"
-                    @input="eventDistanceInput"
+                    :append-outer-icon="timeOuterIcon"
+                    :error-messages="time.errMessage"
+                    @change="eventTimeChanged"
+                    @input="eventTimeInput"
+                    @focus="eventTimeFocus"
+                    :placeholder="getTimePlaceholder"
                   />
-                </template>
-                <v-list dense nav>
-                  <v-subheader>DISTANCES</v-subheader>
-                  <v-list-item
-                    v-for="(item, index) in presetDistances"
-                    :key="index"
-                    @click="clickPresentDistance(index)"
+                </v-col>
+              </v-row>
+              <v-row align="center">
+                <v-col cols="2">
+                  <v-btn
+                    rounded
+                    fab
+                    x-small
+                    elevation="1"
+                    color="primary"
+                    @click="calculateDistance"
                   >
-                    <v-list-item-title>{{ item.title }}</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-              <v-text-field
-                type="text"
-                label="Pace"
-                v-model="pace.input"
-                autocomplete="off"
-                persistent-hint
-                prepend-icon="mdi-calculator"
-                :suffix="paceUnit"
-                :error-messages="pace.errMessage"
-                append-icon="mdi-unfold-more-horizontal"
-                :append-outer-icon="paceOuterIcon"
-                @change="eventPaceChanged"
-                @click:prepend="calculatePace"
-                @click:append="togglePaceUnits"
-                @input="eventPaceInput"
-              />
+                    <v-icon>mdi-equal</v-icon>
+                  </v-btn>
+                </v-col>
+                <v-col cols="10">
+                  <v-menu offset-x>
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        type="text"
+                        label="Distance"
+                        v-model="dist.input"
+                        autocomplete="off"
+                        :suffix="distanceUnit"
+                        :error-messages="dist.errMessage"
+                        append-icon="mdi-unfold-more-horizontal"
+                        :append-outer-icon="distanceOuterIcon"
+                        @change="eventDistanceChanged"
+                        @click:append="toggleDistanceUnits"
+                        @click:append-outer="on.click"
+                        @input="eventDistanceInput"
+                      />
+                    </template>
+                    <v-list dense nav>
+                      <v-subheader>DISTANCES</v-subheader>
+                      <v-list-item
+                        v-for="(item, index) in presetDistances"
+                        :key="index"
+                        @click="clickPresentDistance(index)"
+                      >
+                        <v-list-item-title>{{ item.title }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </v-col>
+              </v-row>
+              <v-row align="center">
+                <v-col cols="2" align="center">
+                  <v-btn rounded fab x-small elevation="1" color="primary" @click="calculatePace">
+                    <v-icon>mdi-equal</v-icon>
+                  </v-btn>
+                </v-col>
+                <v-col>
+                  <v-spacer></v-spacer>
+                  <v-text-field
+                    type="text"
+                    label="Pace"
+                    v-model="pace.input"
+                    autocomplete="off"
+                    persistent-hint
+                    :suffix="paceUnit"
+                    :error-messages="pace.errMessage"
+                    append-icon="mdi-unfold-more-horizontal"
+                    :append-outer-icon="paceOuterIcon"
+                    @change="eventPaceChanged"
+                    @click:append="togglePaceUnits"
+                    @input="eventPaceInput"
+                  />
+                </v-col>
+              </v-row>
             </v-form>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn rounded @click="reset">=</v-btn>
-            <v-btn rounded @click="reset">Reset</v-btn>
+            <v-btn @click="reset">Reset</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -100,7 +129,8 @@ export default {
       validated: false,
       value: 0,
       input: "",
-      errMessage: ""
+      errMessage: "",
+      focused: false
     },
     dist: {
       validated: false,
@@ -138,6 +168,12 @@ export default {
     paceOuterIcon() {
       // return pace.validated ? 'mdi-check' : 'mdi-blank'
       return "mdi-blank";
+    },
+    getTimePlaceholder() {
+      if (this.time.focused) {
+        return "00:00:00";
+      }
+      return "";
     }
   },
 
@@ -179,27 +215,51 @@ export default {
       obj.errMessage = "";
     },
 
-    eventTimeChanged() {
-      console.log("time changed! " + this.time.input);
-      let secs = this.countSec(this.strToTimeObj(this.time.input));
-      console.log(secs + " seconds");
-      console.log(this.secToTimeStr(secs));
+    eventTimeChanged(input) {
+      if (input === "") {
+        // reset the userInput
+        this.time.userInput = false;
+        return;
+      }
 
-      this.time.validated = this.validateTimeStr(this.time.input);
+      // validate the entry
+      this.time.userInput = true;
+
+      if (this.dist.userInput && !this.pace.userInput) {
+        this.calculatePace();
+      } else if (!this.dist.userInput && this.pace.userInput) {
+        this.calculateDistance();
+      }
     },
-    eventDistanceChanged() {
-      console.log("dist changed! " + this.dist.input);
+    eventDistanceChanged(input) {
+      if (input === "") {
+        // reset the userInput
+        this.dist.userInput = false;
+        return;
+      }
+      this.dist.userInput = true;
 
-      let p =
-        this.countSec(this.strToTimeObj(this.time.input)) / this.dist.input;
-      console.log("pace: " + p + " seconds");
-
-      this.dist.validated = this.validateFloatStr(this.dist.input);
+      // if one (and only one) of the other parameters are set: calculate the other
+      if (this.time.userInput && !this.pace.userInput) {
+        this.calculatePace();
+      } else if (!this.time.userInput && this.pace.userInput) {
+        this.calculateTime();
+      }
     },
-    eventPaceChanged() {
-      console.log("pace changed! " + this.pace.input);
+    eventPaceChanged(input) {
+      if (input === "") {
+        // reset the userInput
+        this.pace.userInput = false;
+        return;
+      }
+      this.pace.userInput = true;
 
-      this.pace.validated = this.validateTimeStr(this.pace.input);
+      // if one (and only one) of the other parameters are set: calculate the other
+      if (this.time.userInput && !this.dist.userInput) {
+        this.calculateDistance();
+      } else if (!this.time.userInput && this.dist.userInput) {
+        this.calculateTime();
+      }
     },
     eventTimeInput(input) {
       console.log("time input: " + input);
@@ -209,6 +269,9 @@ export default {
           this.clearErrorMessage(this.time);
         }
       }
+    },
+    eventTimeFocus() {
+      this.time.focused = true;
     },
     eventDistanceInput(input) {
       console.log("distance input: " + input);
@@ -483,17 +546,17 @@ export default {
     reset() {
       this.time.input = "";
       this.time.value = 0;
-      this.time.validated = false;
+      this.time.userInput = false;
       this.time.errMessage = "";
 
       this.dist.value = 0;
       this.dist.input = "";
-      this.dist.validated = false;
+      this.dist.userInput = false;
       this.dist.errMessage = "";
 
       this.pace.input = "";
       this.pace.value = 0;
-      this.pace.validated = false;
+      this.pace.userInput = false;
       this.pace.errMessage = "";
     },
     // rules: source: https://stackoverflow.com/questions/8318236/regex-pattern-for-hhmmss-time-string Stephen Quan

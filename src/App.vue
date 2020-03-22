@@ -34,17 +34,20 @@
     <v-content>
       <Pacr />
     </v-content>
+    <PacrFooter />
   </v-app>
 </template>
 
 <script>
 import Pacr from "./components/Pacr";
+import PacrFooter from "./components/Footer";
 
 export default {
   name: "App",
 
   components: {
-    Pacr
+    Pacr,
+    PacrFooter
   },
 
   data: () => ({
