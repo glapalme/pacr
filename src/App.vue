@@ -1,15 +1,15 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
+    <v-app-bar app color="primary" dark height="55">
       <div class="d-flex align-center">
-        <v-img
+        <!--<v-img
           alt="Vuetify Logo"
           class="shrink mr-2"
           contain
           src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
           transition="scale-transition"
           width="40"
-        />
+        />-->
         <!--
         <v-img
           alt="Vuetify Name"
@@ -19,7 +19,7 @@
           src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
           width="100"
         />-->
-        <h1>Calculate your pace</h1>
+        <h2>Calculate your running pace, time or distance!</h2>
       </div>
 
       <v-spacer></v-spacer>
@@ -30,7 +30,6 @@
       </v-btn>
       -->
     </v-app-bar>
-
     <v-content>
       <Pacr />
     </v-content>
