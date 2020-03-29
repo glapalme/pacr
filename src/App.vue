@@ -1,38 +1,35 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark height="55">
-      <div class="d-flex align-center">
-        <!--<v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />-->
-        <!--
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />-->
-        <h2>Calculate your running pace, time or distance!</h2>
-      </div>
+    <v-img
+      :src="require('@/assets/img/bk-road-1.jpg')"
+      :lazy-src="require('@/assets/img/bk-road-1.jpg')"
+      :height="bgHeight"
+    >
+      <!-- <v-card
+        color="transparent"
+        class="overflow-y-auto"
 
-      <v-spacer></v-spacer>
-      <!-- 
+      >-->
+      <v-toolbar color="white" dense flat>
+        <v-icon>mdi-calculator</v-icon>
+        <v-icon>mdi-blank</v-icon>
+        <v-toolbar-title>pacr.run</v-toolbar-title>
+        <v-spacer></v-spacer>
+
+        <v-toolbar-title>
+          Calculate your running pace, time or distance</v-toolbar-title
+        >
+        <!-- 
         <v-btn href="https://github.com/vuetifyjs/vuetify/releases/latest" target="_blank" text>
         <span class="mr-2">Latest Release</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
       -->
-    </v-app-bar>
-    <v-content>
-      <Pacr />
-    </v-content>
+      </v-toolbar>
+      <v-content>
+        <Pacr />
+      </v-content>
+    </v-img>
     <PacrFooter />
   </v-app>
 </template>
@@ -44,13 +41,20 @@ import PacrFooter from "./components/Footer";
 export default {
   name: "App",
 
+  created() {
+    document.title = "pacr.run - Calculate your running pace!";
+  },
+
   components: {
     Pacr,
     PacrFooter
   },
 
-  data: () => ({
-    //
-  })
+  data: () => ({}),
+  computed: {
+    bgHeight() {
+      return this.$vuetify.breakpoint.height;
+    }
+  }
 };
 </script>

@@ -1,128 +1,122 @@
 <template>
-  <v-container fluid class="pa-0">
-    <v-img
-      :src="require('@/assets/img/bk-road-1.jpg')"
-      :lazy-src="require('@/assets/img/bk-road-1.jpg')"
-      :height="bgHeight"
-    >
-      <v-card
-        color="transparent"
-        class="overflow-y-auto"
-        :min-height="bgHeight"
-        :max-height="bgHeight"
-      >
-        <v-row class="text-center" align="center" justify="center">
-          <v-col cols="4">
-            <v-card flat class="deep-purple lighten-5 pa-4">
-              <v-card-title
-                >Calculate your pace, time or distance!</v-card-title
-              >
-              <v-form>
-                <v-container class="pa-0 pt-2 pb-2">
-                  <v-row align="center" no-gutters>
-                    <v-col cols="2">
-                      <v-badge
-                        :value="time.calculated"
-                        color="green"
-                        dot
-                        overlap
-                      >
+  <v-container fluid class="pa-50">
+    <v-row class="text-center" align="center" justify="center">
+      <v-col cols="12" md="4" sm="8">
+        <v-card
+          rounded
+          class="white pa-4"
+          style=".transparent {
+                background-color: white!important;
+                opacity: 0.9;
+                border-color: transparent!important;
+              }"
+        >
+          <!--<v-card-title>Calculate your pace, time or distance!</v-card-title>-->
+          <v-form>
+            <v-container class="pa-0 pt-2 pb-2">
+              <v-row align="center" no-gutters>
+                <v-col cols="3">
+                  <v-badge :value="time.calculated" color="green" dot overlap>
+                    <v-tooltip left fixed>
+                      <template v-slot:activator="{ on }">
                         <v-btn
                           rounded
                           fab
                           x-small
                           elevation="1"
                           color="primary"
+                          v-on="on"
                           @click="calculateTime"
                         >
                           <v-icon>mdi-equal</v-icon>
                         </v-btn>
-                      </v-badge>
-                    </v-col>
-                    <v-col cols="8">
-                      <v-text-field
-                        type="text"
-                        label="Time"
-                        v-model="time.input"
-                        autocomplete="off"
-                        :error-messages="time.errMessage"
-                        @change="eventTimeChanged"
-                        @input="eventTimeInput"
-                        @focus="eventTimeFocus"
-                        :placeholder="getTimePlaceholder"
-                        @keydown="eventTimeKey"
-                      />
-                    </v-col>
-                  </v-row>
-                </v-container>
-                <v-container class="pa-0 pt-2 pb-2">
-                  <v-row align="center" no-gutters>
-                    <v-col cols="2">
-                      <v-badge
-                        :value="dist.calculated"
-                        color="green"
-                        dot
-                        overlap
-                      >
+                      </template>
+                      <span>Calculate your time</span>
+                    </v-tooltip>
+                  </v-badge>
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                    type="text"
+                    label="Time"
+                    ref="timeTextField"
+                    v-model="time.input"
+                    autocomplete="off"
+                    :error-messages="time.errMessage"
+                    @change="eventTimeChanged"
+                    @input="eventTimeInput"
+                    @focus="eventTimeFocus"
+                    :placeholder="getTimePlaceholder"
+                    @keydown="eventTimeKey"
+                  />
+                </v-col>
+              </v-row>
+            </v-container>
+            <v-container class="pa-0 pt-2 pb-2">
+              <v-row align="center" no-gutters>
+                <v-col cols="3">
+                  <v-badge :value="dist.calculated" color="green" dot overlap>
+                    <v-tooltip left>
+                      <template v-slot:activator="{ on }">
                         <v-btn
                           rounded
                           fab
                           x-small
                           elevation="1"
+                          v-on="on"
                           color="primary"
                           @click="calculateDistance"
                         >
                           <v-icon>mdi-equal</v-icon>
                         </v-btn>
-                      </v-badge>
-                    </v-col>
-                    <v-col cols="8">
-                      <v-text-field
-                        type="text"
-                        label="Distance"
-                        v-model="dist.input"
-                        autocomplete="off"
-                        :suffix="distanceUnit"
-                        :error-messages="dist.errMessage"
-                        append-icon="mdi-unfold-more-horizontal"
-                        @change="eventDistanceChanged"
-                        @click:append="toggleDistanceUnits"
-                        @input="eventDistanceInput"
-                        @keydown="eventDistanceKey"
-                      />
-                    </v-col>
-                    <v-col cols="2">
-                      <v-menu offset-x>
-                        <template v-slot:activator="{ on }">
-                          <v-btn text fab small @click="on.click">
-                            <v-icon>mdi-dots-horizontal</v-icon>
-                          </v-btn>
-                        </template>
-                        <v-list dense nav>
-                          <v-subheader>DISTANCES</v-subheader>
-                          <v-list-item
-                            v-for="(item, index) in presetDistances"
-                            :key="index"
-                            @click="clickPresentDistance(index)"
-                          >
-                            <v-list-item-title>{{
-                              item.title
-                            }}</v-list-item-title>
-                          </v-list-item>
-                        </v-list>
-                      </v-menu>
-                    </v-col>
-                  </v-row>
-                </v-container>
-                <v-container class="pa-0 pt-2 pb-2">
-                  <v-row align="center" no-gutters>
-                    <v-col cols="2" align="center">
-                      <v-badge
-                        :value="pace.calculated"
-                        color="green"
-                        dot
-                        overlap
+                      </template>
+                      <span>Calculate your distance</span>
+                    </v-tooltip>
+                  </v-badge>
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                    type="text"
+                    label="Distance"
+                    ref="distanceTextField"
+                    v-model="dist.input"
+                    autocomplete="off"
+                    :suffix="distanceUnit"
+                    :error-messages="dist.errMessage"
+                    append-icon="mdi-unfold-more-horizontal"
+                    @change="eventDistanceChanged"
+                    @click:append="toggleDistanceUnits"
+                    @input="eventDistanceInput"
+                    @keydown="eventDistanceKey"
+                  />
+                </v-col>
+                <v-col cols="3">
+                  <v-menu offset-x>
+                    <template v-slot:activator="{ on }">
+                      <v-btn text fab small @click="on.click">
+                        <v-icon>mdi-dots-horizontal</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list dense nav>
+                      <v-subheader>DISTANCES</v-subheader>
+                      <v-list-item
+                        v-for="(item, index) in presetDistances"
+                        :key="index"
+                        @click="clickPresentDistance(index)"
                       >
+                        <v-list-item-title>{{ item.title }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </v-col>
+              </v-row>
+            </v-container>
+            <v-container class="pa-0 pt-2 pb-2">
+              <v-row align="center" no-gutters>
+                <v-col cols="3" align="center">
+                  <v-badge :value="pace.calculated" color="green" dot overlap>
+                    <v-tooltip left>
+                      <template v-slot:activator="{ on }">
                         <v-btn
                           rounded
                           fab
@@ -130,41 +124,44 @@
                           elevation="1"
                           color="primary"
                           @click="calculatePace"
+                          v-on="on"
                         >
                           <v-icon>mdi-equal</v-icon>
                         </v-btn>
-                      </v-badge>
-                    </v-col>
-                    <v-col>
-                      <v-spacer></v-spacer>
-                      <v-text-field
-                        type="text"
-                        label="Pace"
-                        v-model="pace.input"
-                        autocomplete="off"
-                        persistent-hint
-                        :suffix="paceUnit"
-                        :error-messages="pace.errMessage"
-                        append-icon="mdi-unfold-more-horizontal"
-                        @change="eventPaceChanged"
-                        @click:append="togglePaceUnits"
-                        @input="eventPaceInput"
-                        @keydown="eventPaceKey"
-                      />
-                    </v-col>
-                    <v-col cols="2"></v-col>
-                  </v-row>
-                </v-container>
-              </v-form>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn @click="reset">Reset</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-card>
-    </v-img>
+                      </template>
+                      <span>Calculate your pace</span>
+                    </v-tooltip>
+                  </v-badge>
+                </v-col>
+                <v-col cols="6">
+                  <v-spacer></v-spacer>
+                  <v-text-field
+                    type="text"
+                    label="Pace"
+                    ref="paceTextField"
+                    v-model="pace.input"
+                    autocomplete="off"
+                    persistent-hint
+                    :suffix="paceUnit"
+                    :error-messages="pace.errMessage"
+                    append-icon="mdi-unfold-more-horizontal"
+                    @change="eventPaceChanged"
+                    @click:append="togglePaceUnits"
+                    @input="eventPaceInput"
+                    @keydown="eventPaceKey"
+                  />
+                </v-col>
+                <v-col cols="3"></v-col>
+              </v-row>
+            </v-container>
+          </v-form>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn small elevation="2" @click="reset">Reset</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -283,6 +280,7 @@ export default {
     },
 
     eventTimeChanged(input) {
+      console.log("time changed! " + this.time.input);
       if (input === "") {
         // reset the userInput
         this.time.userInput = false;
@@ -291,42 +289,44 @@ export default {
 
       // validate the entry
       this.time.userInput = true;
-
+      /*
       if (this.dist.userInput && !this.pace.userInput) {
         this.calculatePace();
       } else if (!this.dist.userInput && this.pace.userInput) {
         this.calculateDistance();
-      }
+      }*/
     },
     eventDistanceChanged(input) {
+      console.log("distance changed! " + this.dist.input);
       if (input === "") {
         // reset the userInput
         this.dist.userInput = false;
         return;
       }
       this.dist.userInput = true;
-
+      /*
       // if one (and only one) of the other parameters are set: calculate the other
       if (this.time.userInput && !this.pace.userInput) {
         this.calculatePace();
       } else if (!this.time.userInput && this.pace.userInput) {
         this.calculateTime();
-      }
+      }*/
     },
     eventPaceChanged(input) {
+      console.log("pace changed! " + this.pace.input);
       if (input === "") {
         // reset the userInput
         this.pace.userInput = false;
         return;
       }
       this.pace.userInput = true;
-
+      /*
       // if one (and only one) of the other parameters are set: calculate the other
       if (this.time.userInput && !this.dist.userInput) {
         this.calculateDistance();
       } else if (!this.time.userInput && this.dist.userInput) {
         this.calculateTime();
-      }
+      }*/
     },
     eventTimeInput(input) {
       console.log("time input: " + input);
@@ -344,6 +344,13 @@ export default {
     },
     eventTimeKey(KeyboardEvent) {
       console.log(KeyboardEvent);
+
+      // Enter: try to calculate the third variable
+      if (KeyboardEvent.key === "Enter") {
+        this.triggerCalculation();
+        return;
+      }
+
       // allow arrow up or down to increment/decrement value
       let step;
       if (KeyboardEvent.key === "ArrowUp") {
@@ -386,6 +393,19 @@ export default {
     },
     eventDistanceKey(KeyboardEvent) {
       console.log(KeyboardEvent);
+
+      // tab: next text field: not working
+      /*if (KeyboardEvent.key === "Tab") {
+        this.$refs.paceTextField.focus();
+        return;
+      }*/
+
+      // Enter: try to calculate the third variable
+      if (KeyboardEvent.key === "Enter") {
+        this.triggerCalculation();
+        return;
+      }
+
       // allow arrow up or down to increment/decrement value
       let step;
       if (KeyboardEvent.key === "ArrowUp") {
@@ -432,6 +452,21 @@ export default {
     },
     eventPaceKey(KeyboardEvent) {
       console.log(KeyboardEvent);
+
+      // Enter: try to calculate the third variable
+      if (KeyboardEvent.key === "Enter") {
+        this.triggerCalculation();
+        return;
+      }
+
+      // not working
+      /*
+      if (KeyboardEvent.key === "Tab") {
+        this.$refs.timeTextField.focus();
+        return;
+      }
+      */
+
       // allow arrow up or down to increment/decrement value
       let step;
       if (KeyboardEvent.key === "ArrowUp") {
@@ -512,6 +547,17 @@ export default {
       this.time.input = this.secToTimeStrWithHour(timeSec);
       this.time.calculated = true;
 
+      // reset others (already validated)
+      if (this.dist.calculated) {
+        this.dist.calculated = false;
+        this.dist.userInput = true;
+      }
+
+      if (this.pace.calculated) {
+        this.pace.calculated = false;
+        this.pace.userInput = true;
+      }
+
       console.log(
         "calculate time with pace: " +
           this.pace.input +
@@ -585,6 +631,17 @@ export default {
       this.dist.input = distKm.toFixed(1);
       this.dist.calculated = true;
 
+      // reset others (already validated)
+      if (this.time.calculated) {
+        this.time.calculated = false;
+        this.time.userInput = true;
+      }
+
+      if (this.pace.calculated) {
+        this.pace.calculated = false;
+        this.pace.userInput = true;
+      }
+
       console.log(
         "calculate distance with time: " +
           this.time.input +
@@ -654,6 +711,17 @@ export default {
 
       this.pace.input = this.secToTimeStr(paceSec);
       this.pace.calculated = true;
+
+      // reset others (already validated)
+      if (this.dist.calculated) {
+        this.dist.calculated = false;
+        this.dist.userInput = true;
+      }
+
+      if (this.time.calculated) {
+        this.time.calculated = false;
+        this.time.userInput = true;
+      }
 
       console.log(
         "calculate pace with time: " +
@@ -769,6 +837,27 @@ export default {
 
       return pad(h, 2) + ":" + pad(m, 2) + ":" + pad(s, 2);
     },
+    // triggerCalculation : calculate a parameter if the two others are valid
+    triggerCalculation() {
+      if (this.time.userInput && this.dist.userInput && !this.pace.userInput) {
+        // try to calculate pace
+        this.calculatePace();
+      } else if (
+        this.time.userInput &&
+        !this.dist.userInput &&
+        this.pace.userInput
+      ) {
+        // try to calculate distance
+        this.calculateDistance();
+      } else if (
+        !this.time.userInput &&
+        this.dist.userInput &&
+        this.pace.userInput
+      ) {
+        // try to calculate time
+        this.calculateTime();
+      }
+    },
     reset() {
       this.time.input = "";
       this.time.value = 0;
@@ -809,5 +898,3 @@ export default {
   }
 };
 </script>
-
-Brett Favre Kovalev Halak Bo PK GSP

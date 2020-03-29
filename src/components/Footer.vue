@@ -1,5 +1,5 @@
 <template>
-  <v-footer height="50">
+  <v-footer height="50" dark>
     <v-row align="center" class="ml-2">
       <div class="overline text-color:deep-purple ">
         <i>More than just a finish line</i> - Rush
