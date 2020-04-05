@@ -35,12 +35,14 @@
                     </v-tooltip>
                   </v-badge>
                 </v-col>
-                <v-col cols="6">
+                <v-col>
                   <v-text-field
                     type="text"
                     label="Time"
                     ref="timeTextField"
                     v-model="time.input"
+                    outlined
+                    dense
                     autocomplete="off"
                     :error-messages="time.errMessage"
                     @change="eventTimeChanged"
@@ -74,38 +76,48 @@
                     </v-tooltip>
                   </v-badge>
                 </v-col>
-                <v-col cols="6">
-                  <v-text-field
-                    type="text"
-                    label="Distance"
-                    ref="distanceTextField"
-                    v-model="dist.input"
-                    autocomplete="off"
-                    :suffix="distanceUnit"
-                    :error-messages="dist.errMessage"
-                    append-icon="mdi-unfold-more-horizontal"
-                    @change="eventDistanceChanged"
-                    @click:append="toggleDistanceUnits"
-                    @input="eventDistanceInput"
-                    @keydown="eventDistanceKey"
-                  />
-                </v-col>
-                <v-col cols="3">
+                <v-col>
                   <v-menu offset-x>
                     <template v-slot:activator="{ on }">
-                      <v-btn text fab small @click="on.click">
-                        <v-icon>mdi-dots-horizontal</v-icon>
-                      </v-btn>
+                      <v-text-field
+                        type="text"
+                        outlined
+                        dense
+                        label="Distance"
+                        ref="distanceTextField"
+                        v-model="dist.input"
+                        autocomplete="off"
+                        :suffix="distanceUnit"
+                        :error-messages="dist.errMessage"
+                        append-icon="mdi-dots-vertical"
+                        @change="eventDistanceChanged"
+                        @click:append="on.click"
+                        @input="eventDistanceInput"
+                        @keydown="eventDistanceKey"
+                      />
                     </template>
                     <v-list dense nav>
-                      <v-subheader>DISTANCES</v-subheader>
-                      <v-list-item
-                        v-for="(item, index) in presetDistances"
-                        :key="index"
-                        @click="clickPresentDistance(index)"
-                      >
-                        <v-list-item-title>{{ item.title }}</v-list-item-title>
-                      </v-list-item>
+                      <v-subheader>UNITS</v-subheader>
+                      <v-list-item-group mandatory value="Marathon">
+                        <v-list-item
+                          v-for="(item, index) in dist.units"
+                          :key="index"
+                          @click="clickPresetUnits(index)"
+                        >
+                          <v-list-item-title>{{ item }}</v-list-item-title>
+                        </v-list-item>
+                      </v-list-item-group>
+                      <v-divider></v-divider>
+                      <v-list-item-group v-model="distanceChoice">
+                        <v-subheader>DISTANCES</v-subheader>
+                        <v-list-item
+                          v-for="(item, index) in presetDistances"
+                          :key="index"
+                          @click="clickPresetDistance(index)"
+                        >
+                          <v-list-item-title>{{ item.title }}</v-list-item-title>
+                        </v-list-item>
+                      </v-list-item-group>
                     </v-list>
                   </v-menu>
                 </v-col>
@@ -133,11 +145,13 @@
                     </v-tooltip>
                   </v-badge>
                 </v-col>
-                <v-col cols="6">
+                <v-col>
                   <v-spacer></v-spacer>
                   <v-text-field
                     type="text"
                     label="Pace"
+                    outlined
+                    dense
                     ref="paceTextField"
                     v-model="pace.input"
                     autocomplete="off"
@@ -151,7 +165,6 @@
                     @keydown="eventPaceKey"
                   />
                 </v-col>
-                <v-col cols="3"></v-col>
               </v-row>
             </v-container>
           </v-form>
@@ -205,7 +218,8 @@ export default {
       input: "",
       errMessage: "",
       calculated: false
-    }
+    },
+    distanceChoice: ""
   }),
 
   computed: {
@@ -253,7 +267,7 @@ export default {
         this.pace.unitIndex++;
       }
     },
-    clickPresentDistance(index) {
+    clickPresetDistance(index) {
       // set the distance value
       this.dist.input = this.presetDistances[index].value;
       // set the units
@@ -262,11 +276,11 @@ export default {
         this.dist.units[this.dist.unitIndex]
       ) {
         // change the units...
-        console.log("search for units " + this.presetDistances[index].unit);
+        //console.log("search for units " + this.presetDistances[index].unit);
         for (let i = 0; i < this.dist.units.length; i++) {
           if (this.presetDistances[index].unit === this.dist.units[i]) {
             this.dist.unitIndex = i;
-            console.log("found at " + i);
+            //console.log("found at " + i);
             break;
           }
         }
@@ -275,12 +289,16 @@ export default {
       // call the input event
       this.eventDistanceInput(this.dist.input);
     },
+    clickPresetUnits(index) {
+      // set the units
+      this.dist.unitIndex = index;
+    },
     clearErrorMessage(obj) {
       obj.errMessage = "";
     },
 
     eventTimeChanged(input) {
-      console.log("time changed! " + this.time.input);
+      //console.log("time changed! " + this.time.input);
       if (input === "") {
         // reset the userInput
         this.time.userInput = false;
@@ -297,7 +315,7 @@ export default {
       }*/
     },
     eventDistanceChanged(input) {
-      console.log("distance changed! " + this.dist.input);
+      //console.log("distance changed! " + this.dist.input);
       if (input === "") {
         // reset the userInput
         this.dist.userInput = false;
@@ -313,7 +331,7 @@ export default {
       }*/
     },
     eventPaceChanged(input) {
-      console.log("pace changed! " + this.pace.input);
+      //console.log("pace changed! " + this.pace.input);
       if (input === "") {
         // reset the userInput
         this.pace.userInput = false;
@@ -329,7 +347,7 @@ export default {
       }*/
     },
     eventTimeInput(input) {
-      console.log("time input: " + input);
+      //console.log("time input: " + input);
       this.time.calculated = false;
 
       // clear the message error if the value is valid
@@ -343,7 +361,7 @@ export default {
       this.time.focused = true;
     },
     eventTimeKey(KeyboardEvent) {
-      console.log(KeyboardEvent);
+      //console.log(KeyboardEvent);
 
       // Enter: try to calculate the third variable
       if (KeyboardEvent.key === "Enter") {
@@ -369,7 +387,7 @@ export default {
       } else if (this.validateTimeStr(this.time.input)) {
         input = this.inputToSec(this.time.input);
       } else {
-        console.log("time " + this.time.input + " not valid, abort increment");
+        //console.log("time " + this.time.input + " not valid, abort increment");
         return;
       }
 
@@ -381,7 +399,7 @@ export default {
       }
     },
     eventDistanceInput(input) {
-      console.log("distance input: " + input);
+      //console.log("distance input: " + input);
       this.dist.calculated = false;
 
       // clear the message error if the value is valid
@@ -392,7 +410,7 @@ export default {
       }
     },
     eventDistanceKey(KeyboardEvent) {
-      console.log(KeyboardEvent);
+      //console.log(KeyboardEvent);
 
       // tab: next text field: not working
       /*if (KeyboardEvent.key === "Tab") {
@@ -424,13 +442,13 @@ export default {
       } else if (this.validateFloatStr(this.dist.input)) {
         input = this.inputToFloat(this.dist.input);
       } else {
-        console.log(
+        /*console.log(
           "distance " + this.dist.input + " not valid, abort increment"
-        );
+        );*/
         return;
       }
 
-      console.log("input: " + input + ", step: " + step);
+      //console.log("input: " + input + ", step: " + step);
 
       // minimum : 0.0
       if (input + step >= 0.0) {
@@ -440,7 +458,7 @@ export default {
       }
     },
     eventPaceInput(input) {
-      console.log("pace input: " + input);
+      //console.log("pace input: " + input);
       this.pace.calculated = false;
 
       // clear the message error if the value is valid
@@ -451,7 +469,7 @@ export default {
       }
     },
     eventPaceKey(KeyboardEvent) {
-      console.log(KeyboardEvent);
+      //console.log(KeyboardEvent);
 
       // Enter: try to calculate the third variable
       if (KeyboardEvent.key === "Enter") {
@@ -485,7 +503,7 @@ export default {
       } else if (this.validateTimeStr(this.pace.input)) {
         input = this.inputToSec(this.pace.input);
       } else {
-        console.log("pace " + this.pace.input + " not valid, abort increment");
+        //console.log("pace " + this.pace.input + " not valid, abort increment");
         return;
       }
 
@@ -557,7 +575,7 @@ export default {
         this.pace.calculated = false;
         this.pace.userInput = true;
       }
-
+      /*
       console.log(
         "calculate time with pace: " +
           this.pace.input +
@@ -572,7 +590,7 @@ export default {
           " (" +
           timeSec +
           " sec)"
-      );
+      );*/
     },
     calculateDistance() {
       // distance[km] = time[sec] / pace[sec/km]
@@ -641,7 +659,7 @@ export default {
         this.pace.calculated = false;
         this.pace.userInput = true;
       }
-
+      /*
       console.log(
         "calculate distance with time: " +
           this.time.input +
@@ -657,6 +675,7 @@ export default {
           distKm +
           " km)"
       );
+      */
     },
     calculatePace() {
       // pace[sec/km] = time[sec] / distance[km]
@@ -722,7 +741,7 @@ export default {
         this.time.calculated = false;
         this.time.userInput = true;
       }
-
+      /*
       console.log(
         "calculate pace with time: " +
           this.time.input +
@@ -738,6 +757,7 @@ export default {
           paceSec +
           " sec/km)"
       );
+      */
     },
     // return the distance input in km
     distanceKm(dist) {
