@@ -1,8 +1,9 @@
 <template>
   <v-container fluid class="pa-50">
     <v-row class="text-center" align="center" justify="center">
-      <v-col cols="12" md="4" sm="8">
+      <v-col cols="12" md="4" sm="8" align-center>
         <v-card
+          flat
           rounded
           class="white pa-4"
           style=".transparent {
@@ -14,7 +15,7 @@
           <!--<v-card-title>Calculate your pace, time or distance!</v-card-title>-->
           <v-form>
             <v-container class="pa-0 pt-2 pb-2">
-              <v-row align="center" no-gutters>
+              <v-row no-gutters>
                 <v-col cols="3">
                   <v-badge :value="time.calculated" color="green" dot overlap>
                     <v-tooltip left fixed>
@@ -55,7 +56,7 @@
               </v-row>
             </v-container>
             <v-container class="pa-0 pt-2 pb-2">
-              <v-row align="center" no-gutters>
+              <v-row no-gutters>
                 <v-col cols="3">
                   <v-badge :value="dist.calculated" color="green" dot overlap>
                     <v-tooltip left>
@@ -124,7 +125,7 @@
               </v-row>
             </v-container>
             <v-container class="pa-0 pt-2 pb-2">
-              <v-row align="center" no-gutters>
+              <v-row no-gutters>
                 <v-col cols="3" align="center">
                   <v-badge :value="pace.calculated" color="green" dot overlap>
                     <v-tooltip left>
